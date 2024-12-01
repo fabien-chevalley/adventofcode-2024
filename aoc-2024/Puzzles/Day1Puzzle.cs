@@ -20,7 +20,7 @@ public class Day1Puzzle : Puzzle<long>
             (current, value) => current + lines.Count(x => x.Second == value.First) * value.First);
     }
 
-    private async Task<IEnumerable<Line>> GetLines()
+    private async Task<Line[]> GetLines()
     {
         var input = await Reader.ReadToEndAsync();
         var matches = Regex.Matches(input, "([0-9]+)\\s+([0-9]+)");
@@ -36,7 +36,9 @@ public class Day1Puzzle : Puzzle<long>
         var firsts = values.Select(x => x.first).Order();
         var seconds = values.Select(x => x.second).Order();
 
-        return firsts.Zip(seconds, (first, second) => new Line(first, second));
+        return firsts
+            .Zip(seconds, (first, second) => new Line(first, second))
+            .ToArray();
     }
 
     private record Line(int First, int Second);
