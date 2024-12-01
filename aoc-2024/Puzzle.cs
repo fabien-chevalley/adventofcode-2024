@@ -3,7 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace aoc_2024;
 
-public abstract class Puzzle
+public class Result<TResult>(TResult value)
+{
+    private readonly TResult _value = value;
+}
+
+public abstract class Puzzle<TResult>
 {
     public virtual string Name
     {
@@ -15,23 +20,22 @@ public abstract class Puzzle
         }
     }
 
-    protected virtual string Input
+    protected virtual StreamReader Reader
     {
         get
         {
             var assembly = Assembly.GetExecutingAssembly();
 
             var resourceName = $"{GetType().FullName}.input";
-            using var stream = assembly.GetManifestResourceStream(resourceName) ??
-                               throw new ArgumentOutOfRangeException(nameof(resourceName),
-                                   $"Can not find embedded resource named {resourceName}");
+            var stream = assembly.GetManifestResourceStream(resourceName) ??
+                         throw new ArgumentOutOfRangeException(nameof(resourceName),
+                             $"Can not find embedded resource named {resourceName}");
 
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+            return new StreamReader(stream);
         }
     }
 
-    public abstract ValueTask<string> PartOne();
+    public abstract ValueTask<TResult> PartOne();
 
-    public abstract ValueTask<string> PartTwo();
+    public abstract ValueTask<TResult> PartTwo();
 }
