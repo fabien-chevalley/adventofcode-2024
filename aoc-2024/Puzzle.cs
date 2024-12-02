@@ -1,14 +1,11 @@
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace aoc_2024;
 
-public class Result<TResult>(TResult value)
-{
-    private readonly TResult _value = value;
-}
+public interface IPuzzle;
 
-public abstract class Puzzle<TResult>
+public abstract class Puzzle<TResult> : IPuzzle
+    where TResult : new()
 {
     public virtual string Name
     {
@@ -20,20 +17,7 @@ public abstract class Puzzle<TResult>
         }
     }
 
-    protected virtual StreamReader Reader
-    {
-        get
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            var resourceName = $"{GetType().FullName}.input";
-            var stream = assembly.GetManifestResourceStream(resourceName) ??
-                         throw new ArgumentOutOfRangeException(nameof(resourceName),
-                             $"Can not find embedded resource named {resourceName}");
-
-            return new StreamReader(stream);
-        }
-    }
+    protected virtual string Filename => $"./Inputs/{GetType().Name}.input";
 
     public abstract ValueTask<TResult> PartOne();
 

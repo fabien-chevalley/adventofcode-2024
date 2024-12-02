@@ -13,8 +13,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Puzzles\Day1Puzzle.input" />
-      <EmbeddedResource Include="Puzzles\Day1Puzzle.input" />
+      <None Include="Inputs\Day1Puzzle.input">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Include="Inputs\Day2Puzzle.input">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

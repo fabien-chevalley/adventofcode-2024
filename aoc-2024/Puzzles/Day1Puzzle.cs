@@ -22,7 +22,7 @@ public class Day1Puzzle : Puzzle<long>
 
     private async Task<Line[]> GetLines()
     {
-        var input = await Reader.ReadToEndAsync();
+        var input = await File.ReadAllTextAsync(Filename);
         var matches = Regex.Matches(input, "([0-9]+)\\s+([0-9]+)");
         var values = matches
             .Select(m =>
