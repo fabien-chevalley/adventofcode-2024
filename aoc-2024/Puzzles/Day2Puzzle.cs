@@ -3,7 +3,7 @@ using Levels = System.Collections.Generic.List<long>;
 
 namespace aoc_2024.Puzzles;
 
-public class Day2Puzzle : Puzzle<long>
+public class Day2Puzzle : Puzzle
 {
     public override async ValueTask<long> PartOne()
     {

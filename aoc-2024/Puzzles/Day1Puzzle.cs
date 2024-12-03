@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace aoc_2024.Puzzles;
 
-public class Day1Puzzle : Puzzle<long>
+public class Day1Puzzle : Puzzle
 {
     public override async ValueTask<long> PartOne()
     {

@@ -6,11 +6,10 @@ namespace aoc_2024;
 
 public static class Solver
 {
-    public static async Task Solve<TPuzzle, TResult>()
-        where TPuzzle : Puzzle<TResult>, new()
-        where TResult : new()
+    public static async Task Solve<TPuzzle>()
+        where TPuzzle : Puzzle, new()
     {
-        var results = await Solve<long>(typeof(TPuzzle));
+        var results = await Solve(typeof(TPuzzle));
         
         var table = CreateTable();
         table.AddRow(PuzzleName(typeof(TPuzzle)), results.PartOne.ToString(), results.PartTwo.ToString());
@@ -19,13 +18,13 @@ public static class Solver
     
     public static async Task SolveLast()
     {
-        var type = typeof(Puzzle<>).Assembly
+        var type = typeof(Puzzle).Assembly
             .GetTypes()
             .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(IPuzzle)))
             .OrderBy(x => x.Name)
             .Last();
         
-        var results = await Solve<long>(type);
+        var results = await Solve(type);
         
         var table = CreateTable();
         table.AddRow(PuzzleName(type), results.PartOne.ToString(), results.PartTwo.ToString());
@@ -34,7 +33,7 @@ public static class Solver
 
     public static async Task SolveAll()
     {
-        var types = typeof(Puzzle<>).Assembly
+        var types = typeof(Puzzle).Assembly
             .GetTypes()
             .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(IPuzzle)))
             .OrderBy(x => x.Name);
@@ -45,24 +44,23 @@ public static class Solver
             {
                 foreach (var type in types)
                 {
-                    var results = await Solve<long>(type);
+                    var results = await Solve(type);
                     table.AddRow(PuzzleName(type), results.PartOne.ToString(), results.PartTwo.ToString());
                     ctx.Refresh();
                 }
             });
     }
 
-    private static async Task<Results<TResult>> Solve<TResult>(Type type)
-        where TResult : new()
+    private static async Task<Results> Solve(Type type)
     {
-        if (Activator.CreateInstance(type) is not Puzzle<TResult> puzzle) throw new InvalidOperationException();
+        if (Activator.CreateInstance(type) is not Puzzle puzzle) throw new InvalidOperationException();
 
         var stopwatch = Stopwatch.StartNew();
-        var partOneResult = new Result<TResult>(await puzzle.PartOne(), stopwatch.Elapsed);
+        var partOneResult = new Result(await puzzle.PartOne(), stopwatch.Elapsed);
 
         stopwatch.Restart();
-        var partTwoResult = new Result<TResult>(await puzzle.PartTwo(), stopwatch.Elapsed);
-        return new Results<TResult>(partOneResult, partTwoResult);
+        var partTwoResult = new Result(await puzzle.PartTwo(), stopwatch.Elapsed);
+        return new Results(partOneResult, partTwoResult);
     }
 
     private static string PuzzleName(Type type)
@@ -85,9 +83,9 @@ public static class Solver
             .BorderColor(Color.Grey);
     }
 
-    private sealed record Results<TResult>(Result<TResult> PartOne, Result<TResult> PartTwo);
+    private sealed record Results(Result PartOne, Result PartTwo);
 
-    private sealed record Result<TResult>(TResult Value, TimeSpan Elapsed)
+    private sealed record Result(long Value, TimeSpan Elapsed)
     {
         public override string ToString()
         {
