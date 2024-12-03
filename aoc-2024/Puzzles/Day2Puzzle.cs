@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Levels = System.Collections.Generic.List<long>;
 
 namespace aoc_2024.Puzzles;
@@ -13,7 +14,7 @@ public class Day2Puzzle : Puzzle<long>
             if (IsSafe(levels))
                 sum++;
 
-        // 218
+        Debug.Assert(sum == 218);
         return sum;
     }
 
@@ -37,10 +38,17 @@ public class Day2Puzzle : Puzzle<long>
                     }
                 }
 
-        // 290
+        Debug.Assert(sum == 290);
         return sum;
     }
 
+    private static List<long> FirstDerivative(List<int> levels)
+    {
+        var result = new List<long>();
+
+        return result;
+    }
+    
     private static bool IsSafe(Levels levels)
     {
         if (levels.Distinct().Count() == 1)
