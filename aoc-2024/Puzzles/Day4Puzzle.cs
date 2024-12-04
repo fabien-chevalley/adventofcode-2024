@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 
 namespace aoc_2024.Puzzles;
@@ -39,21 +38,51 @@ public class Day4Puzzle : Puzzle
                 .Concat(secondDiagonal.Select(diagonal => diagonal.Reverse()))
                 .ToArray();
 
-        var hits = allDimensions.Sum(input => Hits(input.ToArray()));
-        Debug.Assert(hits == 2560);
-
-        return hits;
+        return allDimensions.Sum(input => Hits(input.ToArray()));
     }
 
     public override async ValueTask<long> PartTwo()
     {
-        var line = await File.ReadAllTextAsync(Filename);
+        var lines = await File.ReadAllLinesAsync(Filename);
+        var matrix = lines
+            .Select(l => l.Select(c => c).ToArray())
+            .ToArray();
 
         var sum = 0;
+        for (var i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (var j = 0; j < matrix[i].Length; j++)
+            {
+                if (matrix[i][j] == 'A' && XCrossHit(matrix, i, j))
+                {
+                    sum++;
+                }
+            }
+        }
 
         return sum;
     }
-    
+
+    private static bool XCrossHit(char[][] input, int i, int j)
+    {
+        char? indexTopLeftCorner = i - 1 >= 0 && j - 1 >= 0 ? input[i - 1][j - 1] : null;
+        char? indexTopRightCorner = i - 1 >= 0 && j + 1 < input[0].Length ? input[i - 1][j + 1] : null;
+        char? indexBottomLeftCorner = i + 1 < input.Length && j - 1 >= 0 ? input[i + 1][j - 1] : null;
+        char? indexBottomRightCorner = i + 1 < input.Length && j + 1 < input[0].Length ? input[i + 1][j + 1] : null;
+
+        if ((indexTopLeftCorner == 'M' && indexBottomRightCorner == 'S') ||
+            (indexTopLeftCorner == 'S' && indexBottomRightCorner == 'M'))
+        {
+            if ((indexTopRightCorner == 'M' && indexBottomLeftCorner == 'S') ||
+                (indexTopRightCorner == 'S' && indexBottomLeftCorner == 'M'))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static List<string> GetDiagonal(char[][] matrix)
     {
         var firstDiagonal = new List<string>();
