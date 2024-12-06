@@ -9,7 +9,6 @@ public class Day6Puzzle : Puzzle
             .Select(l => l.Select(c => c).ToArray())
             .ToArray()));
 
-
         while (!matrix.IsOutOfBox())
         {
             var value = matrix.GetValueInFront();
@@ -27,11 +26,47 @@ public class Day6Puzzle : Puzzle
 
     public override async ValueTask<long> PartTwo()
     {
-        var lines = await File.ReadAllTextAsync(Filename);
+        var lines = await File.ReadAllLinesAsync(Filename);
+        var matrix = new Matrix(ConvertJaggedToRectangular(lines
+            .Select(l => l.Select(c => c).ToArray())
+            .ToArray()));
 
-        var sum = 0;
+        Walk(matrix);
 
-        return sum;
+        var coordinates = matrix.Visited;
+
+        var loops = 0;
+        foreach (var coordinate in coordinates.Where(x => matrix.GetValue(x) == '.'))
+        {
+            var matrixCopy = new Matrix(matrix);
+            matrixCopy.SetValue(coordinate, '#');
+
+            if (Walk(matrixCopy, true)) loops++;
+
+            matrixCopy.SetValue(coordinate, '.');
+        }
+
+        return loops;
+    }
+
+    private static bool Walk(Matrix matrix, bool detectLoop = false)
+    {
+        var count = 0;
+        while (!matrix.IsOutOfBox())
+        {
+            var value = matrix.GetValueInFront();
+            while (value == '#')
+            {
+                matrix.Rotate();
+                value = matrix.GetValueInFront();
+            }
+
+            if (detectLoop && count++ > 100) return true;
+
+            matrix.Move();
+        }
+
+        return false;
     }
 
     private char[,] ConvertJaggedToRectangular(char[][] jaggedArray)
@@ -67,7 +102,17 @@ public class Matrix
         _visited.Add(_position);
     }
 
+    public Matrix(Matrix matrix)
+    {
+        _data = matrix._data;
+        _position = GetCoordinates('^');
+        _direction = Direction.Up;
+        _visited.Add(_position);
+    }
+
     public int PathLength => _visited.Count;
+
+    public List<Coordinates> Visited => _visited.ToList();
 
     public Coordinates GetCoordinates(char value)
     {
@@ -85,14 +130,14 @@ public class Matrix
         return new Coordinates(-1, -1);
     }
 
-    public char GetValue()
-    {
-        return GetValue(_position);
-    }
-
     public char GetValue(Coordinates position)
     {
         return _data[position.X, position.Y];
+    }
+
+    public void SetValue(Coordinates position, char value)
+    {
+        _data[position.X, position.Y] = value;
     }
 
     public char? GetValueInFront()
