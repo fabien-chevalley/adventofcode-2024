@@ -1,10 +1,10 @@
-namespace aoc_2024;
+namespace AdventOfCode;
 
 public interface IPuzzle;
 
 public abstract class Puzzle : IPuzzle
 {
-    protected virtual string Filename => $"../../../Inputs/{GetType().Name}.input";
+    public string Filename { get; set; }
 
     public abstract ValueTask<long> PartOne();
 

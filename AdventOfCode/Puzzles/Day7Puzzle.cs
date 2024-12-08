@@ -1,56 +1,40 @@
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
-
-namespace aoc_2024.Puzzles;
+namespace AdventOfCode.Puzzles;
 
 public class Day7Puzzle : Puzzle
 {
     public override async ValueTask<long> PartOne()
     {
         var lines = await File.ReadAllLinesAsync(Filename);
-        var datas = lines.Select(l => new Data(
+        var data = lines.Select(l => new Data(
                 long.Parse(l.Split(":")[0]),
                 l.Split(":")[1].Trim().Split(" ").Select(long.Parse).ToArray()))
             .ToArray();
 
-        var sum = datas.Sum(x => ComputeSum(x));
-        Debug.Assert(sum == 267566105056);
-        return sum;
+        return data.Sum(x => ComputeSum(x));
     }
 
     public override async ValueTask<long> PartTwo()
     {
         var lines = await File.ReadAllLinesAsync(Filename);
-        var datas = lines.Select(l => new Data(
+        var data = lines.Select(l => new Data(
                 long.Parse(l.Split(":")[0]),
                 l.Split(":")[1].Trim().Split(" ").Select(long.Parse).ToArray()))
             .ToArray();
 
-        var sum = datas.Sum(x => ComputeSum(x, true));
-        Debug.Assert(sum == 116094961956019);
-        return sum;
+        return data.Sum(x => ComputeSum(x, true));
     }
 
     private static long ComputeSum(Data data, bool part2 = false)
     {
         long result = 0;
-        long sum = data.Numbers[0];
+        var sum = data.Numbers[0];
         foreach (var operators in GenerateCombinations(data.Numbers.Length - 1, part2))
-        {  
-            for (int i = 1; i < data.Numbers.Length; i++)
+        {
+            for (var i = 1; i < data.Numbers.Length; i++)
             {
-                if(operators[i-1] == Operators.Addition)
-                {
-                    sum += data.Numbers[i];
-                }
-                if(operators[i-1] == Operators.Multiplication)
-                {
-                    sum *= data.Numbers[i];
-                }
-                if(operators[i-1] == Operators.Concatanation)
-                {
-                    sum = long.Parse($"{sum}{data.Numbers[i]}");
-                }
+                if (operators[i - 1] == Operators.Addition) sum += data.Numbers[i];
+                if (operators[i - 1] == Operators.Multiplication) sum *= data.Numbers[i];
+                if (operators[i - 1] == Operators.Concatenation) sum = long.Parse($"{sum}{data.Numbers[i]}");
             }
 
             if (data.Sum == sum)
@@ -65,7 +49,7 @@ public class Day7Puzzle : Puzzle
         return result;
     }
 
-    static List<Operators[]> GenerateCombinations(int n, bool part2)
+    private static List<Operators[]> GenerateCombinations(int n, bool part2)
     {
         var combinations = new List<Operators[]>();
         var bytes = new Operators[n];
@@ -74,7 +58,8 @@ public class Day7Puzzle : Puzzle
         return combinations;
     }
 
-    static void GenerateCombinations(int n, List<Operators[]> combinations, Operators[] bytes, int i, bool part2)
+    private static void GenerateCombinations(int n, List<Operators[]> combinations, Operators[] bytes, int i,
+        bool part2)
     {
         if (i == n)
         {
@@ -89,21 +74,21 @@ public class Day7Puzzle : Puzzle
 
             bytes[i] = Operators.Multiplication;
             GenerateCombinations(n, combinations, bytes, i + 1, part2);
-            
-            if(part2)
+
+            if (part2)
             {
-                bytes[i] = Operators.Concatanation;
+                bytes[i] = Operators.Concatenation;
                 GenerateCombinations(n, combinations, bytes, i + 1, part2);
             }
         }
     }
 
-    public record Data(long Sum, long[] Numbers);
-}
+    private record Data(long Sum, long[] Numbers);
 
-public enum Operators
-{
-    Addition,
-    Multiplication,
-    Concatanation,
+    private enum Operators
+    {
+        Addition,
+        Multiplication,
+        Concatenation
+    }
 }

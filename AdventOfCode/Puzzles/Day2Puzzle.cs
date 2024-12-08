@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Levels = System.Collections.Generic.List<long>;
 
-namespace aoc_2024.Puzzles;
+namespace AdventOfCode.Puzzles;
 
 public class Day2Puzzle : Puzzle
 {
@@ -48,13 +48,10 @@ public class Day2Puzzle : Puzzle
 
         return result;
     }
-    
+
     private static bool IsSafe(Levels levels)
     {
-        if (levels.Distinct().Count() == 1)
-        {
-            return false;
-        }
+        if (levels.Distinct().Count() == 1) return false;
 
         var fail = false;
         long? previousDiff = null;
@@ -82,7 +79,7 @@ public class Day2Puzzle : Puzzle
     private async Task<List<Levels>> GetLines()
     {
         var lines = new List<Levels>();
-        
+
         foreach (var line in await File.ReadAllLinesAsync(Filename))
             lines.Add(line.Split(' ').Select(long.Parse).ToList());
 

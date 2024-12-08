@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Spectre.Console;
 
-namespace aoc_2024;
+namespace AdventOfCode;
 
 public static class Solver
 {
@@ -10,12 +10,12 @@ public static class Solver
         where TPuzzle : Puzzle, new()
     {
         var results = await Solve(typeof(TPuzzle));
-        
+
         var table = CreateTable();
         table.AddRow(PuzzleName(typeof(TPuzzle)), results.PartOne.ToString(), results.PartTwo.ToString());
         AnsiConsole.Write(table);
     }
-    
+
     public static async Task SolveLast()
     {
         var type = typeof(Puzzle).Assembly
@@ -23,9 +23,9 @@ public static class Solver
             .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(IPuzzle)))
             .OrderBy(x => x.Name)
             .Last();
-        
+
         var results = await Solve(type);
-        
+
         var table = CreateTable();
         table.AddRow(PuzzleName(type), results.PartOne.ToString(), results.PartTwo.ToString());
         AnsiConsole.Write(table);
@@ -55,6 +55,8 @@ public static class Solver
     {
         if (Activator.CreateInstance(type) is not Puzzle puzzle) throw new InvalidOperationException();
 
+        puzzle.Filename = $"../../../Inputs/{type.Name}.input";
+
         var stopwatch = Stopwatch.StartNew();
         var partOneResult = new Result(await puzzle.PartOne(), stopwatch.Elapsed);
 
@@ -65,13 +67,13 @@ public static class Solver
 
     private static string PuzzleName(Type type)
     {
-        if(!type.IsAssignableTo(typeof(IPuzzle))) throw new InvalidOperationException();
-        
+        if (!type.IsAssignableTo(typeof(IPuzzle))) throw new InvalidOperationException();
+
         var typeName = type.Name;
         var match = Regex.Match(typeName, "Day(?<day>[0-9]{1,2})Puzzle");
         return match.Success ? $"Day {match.Groups["day"].Value}" : typeName;
     }
-    
+
     private static Table CreateTable()
     {
         return new Table()

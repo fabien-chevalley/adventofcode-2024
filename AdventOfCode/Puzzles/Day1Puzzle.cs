@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace aoc_2024.Puzzles;
+namespace AdventOfCode.Puzzles;
 
 public class Day1Puzzle : Puzzle
 {

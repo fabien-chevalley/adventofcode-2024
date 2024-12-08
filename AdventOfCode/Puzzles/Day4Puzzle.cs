@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace aoc_2024.Puzzles;
+namespace AdventOfCode.Puzzles;
 
 public class Day4Puzzle : Puzzle
 {
@@ -15,10 +15,7 @@ public class Day4Puzzle : Puzzle
         for (var i = 0; i < matrix.GetLength(0); i++)
         {
             var column = new StringBuilder();
-            for (var j = 0; j < matrix[i].Length; j++)
-            {
-                column.Append(matrix[j][i].ToString());
-            }
+            for (var j = 0; j < matrix[i].Length; j++) column.Append(matrix[j][i].ToString());
 
             columns.Add(column.ToString());
         }
@@ -50,15 +47,9 @@ public class Day4Puzzle : Puzzle
 
         var sum = 0;
         for (var i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (var j = 0; j < matrix[i].Length; j++)
-            {
-                if (matrix[i][j] == 'A' && XCrossHit(matrix, i, j))
-                {
-                    sum++;
-                }
-            }
-        }
+        for (var j = 0; j < matrix[i].Length; j++)
+            if (matrix[i][j] == 'A' && XCrossHit(matrix, i, j))
+                sum++;
 
         return sum;
     }
@@ -72,13 +63,9 @@ public class Day4Puzzle : Puzzle
 
         if ((indexTopLeftCorner == 'M' && indexBottomRightCorner == 'S') ||
             (indexTopLeftCorner == 'S' && indexBottomRightCorner == 'M'))
-        {
             if ((indexTopRightCorner == 'M' && indexBottomLeftCorner == 'S') ||
                 (indexTopRightCorner == 'S' && indexBottomLeftCorner == 'M'))
-            {
                 return true;
-            }
-        }
 
         return false;
     }
@@ -107,9 +94,8 @@ public class Day4Puzzle : Puzzle
     {
         var hits = 0;
         for (var i = 0; i < input.Length; i++)
-        {
-            if (Match(input.Skip(i).ToArray())) hits++;
-        }
+            if (Match(input.Skip(i).ToArray()))
+                hits++;
 
         return hits;
     }

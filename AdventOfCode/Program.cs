@@ -1,9 +1,6 @@
-﻿using aoc_2024;
-using aoc_2024.Puzzles;
-using Spectre.Console;
+﻿using AdventOfCode;
 
-
-await Solver.SolveLast();
+await Solver.SolveAll();
 
 // var mode = AnsiConsole.Prompt(
 //     new SelectionPrompt<string>()

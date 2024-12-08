@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace aoc_2024.Puzzles;
+namespace AdventOfCode.Puzzles;
 
 public class Day5Puzzle : Puzzle
 {
@@ -23,21 +23,20 @@ public class Day5Puzzle : Puzzle
         foreach (var update in data.Updates.Where(u => Fail(u, data)))
         {
             var ordered = new List<int>();
-            while(ordered.Count < update.Length)
-            {
+            while (ordered.Count < update.Length)
                 foreach (var page in update.Where(x => !ordered.Contains(x)))
                 {
                     var copy = update.ToList();
                     copy.Remove(page);
                     copy.RemoveAll(x => ordered.Contains(x));
-                    if (copy.All(x => data.AfterPagesLookup.ContainsKey(page) && data.AfterPagesLookup[page].Contains(x)))
+                    if (copy.All(
+                            x => data.AfterPagesLookup.ContainsKey(page) && data.AfterPagesLookup[page].Contains(x)))
                     {
                         ordered.Add(page);
                         break;
                     }
                 }
-            }
-            
+
             sum += ordered[ordered.Count / 2];
         }
 
@@ -53,24 +52,20 @@ public class Day5Puzzle : Puzzle
 
             if (i + 1 < update.Length)
                 for (var j = i + 1; j < update.Length; j++)
-                {
                     if (data.AfterPagesLookup.ContainsKey(update[j]) && data.AfterPagesLookup[update[j]].Contains(page))
                     {
                         fail = true;
                         break;
                     }
-                }
 
             if (i - 1 > 0)
                 for (var j = i - 1; j > 0; j--)
-                {
                     if (data.BeforePagesLookup.ContainsKey(update[j]) &&
                         data.BeforePagesLookup[update[j]].Contains(page))
                     {
                         fail = true;
                         break;
                     }
-                }
 
             if (fail) break;
         }
