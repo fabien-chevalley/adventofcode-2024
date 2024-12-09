@@ -13,6 +13,7 @@ public class ResolutionTests
     [Arguments(typeof(Day6Puzzle), 4988, 4985)]
     [Arguments(typeof(Day7Puzzle), 267566105056, 116094961956019)]
     [Arguments(typeof(Day8Puzzle), 256, 1005)]
+    [Arguments(typeof(Day9Puzzle), 6395800119709, 6418529470362)]
     public async Task Year2024(Type type, long partOneResult, long partTwoResult)
     {
         if (Activator.CreateInstance(type) is not Puzzle puzzle) throw new InvalidOperationException();

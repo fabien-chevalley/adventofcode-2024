@@ -1,6 +1,6 @@
 ﻿using AdventOfCode;
 
-await Solver.SolveAll();
+await Solver.SolveLast();
 
 // var mode = AnsiConsole.Prompt(
 //     new SelectionPrompt<string>()
