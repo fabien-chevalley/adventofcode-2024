@@ -1,6 +1,7 @@
 ﻿using AdventOfCode;
+using AdventOfCode.Puzzles;
 
-await Solver.SolveLast();
+await Solver.Solve<Day10Puzzle>();
 
 // var mode = AnsiConsole.Prompt(
 //     new SelectionPrompt<string>()
