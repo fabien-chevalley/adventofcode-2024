@@ -41,13 +41,13 @@ public class Day10Puzzle : Puzzle
         if (value == 10)
         {
             submitReached.Add(coordinates);
-            Console.WriteLine($"Submit reached: {coordinates.X}, {coordinates.Y} --> {submitReached}");
+            // Console.WriteLine($"Submit reached: {coordinates.X}, {coordinates.Y} --> {submitReached}");
             return;
         }
 
         var direction = Direction.Up;
 
-        Console.WriteLine($"{matrix.GetValue(coordinates)}: {coordinates.X}, {coordinates.Y}");
+        // Console.WriteLine($"{matrix.GetValue(coordinates)}: {coordinates.X}, {coordinates.Y}");
 
         do
         {
@@ -68,8 +68,19 @@ public class Day10Puzzle : Puzzle
             .Select(l => l.Select(c => c).ToArray())
             .ToArray()
             .ConvertJaggedToRectangular());
+       
+        var startCoordinates = matrix.GetCoordinates('0');
+        var sum = 0;
 
-        return 0;
+        foreach (Coordinates start in startCoordinates)
+        {
+            var submitReached = new List<Coordinates>();
+            Walk(matrix, start, 1, submitReached);
+
+            sum += submitReached.Count;
+        }
+
+        return sum;
     }
 
     public class Matrix : Models.Matrix
