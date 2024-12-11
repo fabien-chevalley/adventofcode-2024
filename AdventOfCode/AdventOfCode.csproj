@@ -42,6 +42,9 @@
         <None Update="Inputs\Day10Puzzle.input">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="Inputs\Day11Puzzle.input">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
