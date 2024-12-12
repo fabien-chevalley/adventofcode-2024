@@ -7,10 +7,10 @@ public class Day10Puzzle : Puzzle
 {
     public enum Direction
     {
-        Up,
-        Right,
-        Down,
-        Left
+        Up = 0,
+        Right = 1,
+        Down = 2,
+        Left = 3
     }
 
     public override async ValueTask<long> PartOne()
