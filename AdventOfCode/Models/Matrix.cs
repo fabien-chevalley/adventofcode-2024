@@ -1,6 +1,8 @@
+using System.Collections;
+
 namespace AdventOfCode.Models;
 
-public class Matrix
+public class Matrix : IEnumerable<Coordinates>
 {
     protected readonly char[,] Data;
 
@@ -42,5 +44,27 @@ public class Matrix
     {
         return position.X < 0 || position.X >= Data.GetLength(0) ||
                position.Y < 0 || position.Y >= Data.GetLength(1);
+    }
+
+    public char this[Coordinates coordinates]
+    {
+        get => GetValue(coordinates);
+        set => SetValue(coordinates, value);
+    }
+
+    public IEnumerator<Coordinates> GetEnumerator()
+    {
+        for (int row = 0; row < Data.GetLength(0); row++)
+        {
+            for (int col = 0; col < Data.GetLength(1); col++)
+            {
+                yield return new Coordinates(row, col);
+            }
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
