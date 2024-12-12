@@ -13,7 +13,6 @@ public class Day12Puzzle : Puzzle
             .Select(l => l.Select(c => c).ToArray())
             .ToArray()
             .ConvertJaggedToRectangular());
-
         
         var areas = new List<Area>();
         var visited = new List<Coordinates>();
@@ -33,10 +32,27 @@ public class Day12Puzzle : Puzzle
 
     public override async ValueTask<long> PartTwo()
     {
-        var line = await File.ReadAllTextAsync(Filename);
 
+        var lines = await File.ReadAllLinesAsync(Filename);
+        var matrix = new Matrix(lines
+            .Select(l => l.Select(c => c).ToArray())
+            .ToArray()
+            .ConvertJaggedToRectangular());
+        
+        var areas = new List<Area>();
+        var visited = new List<Coordinates>();
+        foreach (var coordinates in matrix)
+        {
+            if (!visited.Contains(coordinates))
+            {
+                var area = new List<Coordinates>{coordinates};
+                Walk(matrix, coordinates, area);
+                visited.AddRange(area);
+                areas.Add(area.ToArray());
+            }
+        }
 
-        return 0;
+        return areas.Sum(x => Price2(matrix, x));
     }
 
     private void Walk(Matrix matrix, Coordinates coordinates, List<Coordinates> area)
@@ -78,7 +94,70 @@ public class Day12Puzzle : Puzzle
 
         return perimeter * area.Length;
     }
+    
+    private long Price2(Matrix matrix, Area area)
+    {
+        var sides = 0L;
+        foreach (var coordinates in area)
+        {
+            var value = matrix.GetValue(coordinates);
+            
+            if (matrix.GetValueInFront(Direction.Up, coordinates) != value &&
+                matrix.GetValueInFront(Direction.Right, coordinates) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Right, coordinates) != value &&
+                matrix.GetValueInFront(Direction.Down, coordinates) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Down, coordinates) != value &&
+                matrix.GetValueInFront(Direction.Left, coordinates) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Left, coordinates) != value &&
+                matrix.GetValueInFront(Direction.Up, coordinates) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Up, coordinates) == value &&
+                matrix.GetValueInFront(Direction.Right, coordinates) == value &&
+                matrix.GetValue(new Coordinates(coordinates.X - 1, coordinates.Y + 1)) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Right, coordinates) == value &&
+                matrix.GetValueInFront(Direction.Down, coordinates) == value &&
+                matrix.GetValue(new Coordinates(coordinates.X + 1, coordinates.Y + 1)) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Down, coordinates) == value &&
+                matrix.GetValueInFront(Direction.Left, coordinates) == value &&
+                matrix.GetValue(new Coordinates(coordinates.X + 1, coordinates.Y - 1)) != value)
+            {
+                sides++;
+            }
+            
+            if (matrix.GetValueInFront(Direction.Left, coordinates) == value &&
+                matrix.GetValueInFront(Direction.Up, coordinates) == value &&
+                matrix.GetValue(new Coordinates(coordinates.X - 1, coordinates.Y - 1)) != value)
+            {
+                sides++;
+            }
+        }
 
+        return sides * area.Length;
+    }
+    
     public class Matrix : Models.Matrix
     {
         public Matrix(char[,] data) : base(data)
