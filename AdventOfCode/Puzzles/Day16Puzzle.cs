@@ -58,7 +58,66 @@ public class Day16Puzzle : Puzzle
     public override async ValueTask<long> PartTwo()
     {
         var lines = await File.ReadAllLinesAsync(Filename);
-        return 0;
+        var matrix = new Matrix(lines
+            .Select(l => l.Select(c => c).ToArray())
+            .ToArray()
+            .ConvertJaggedToRectangular());
+
+        Queue<Cell> nodesToProcess = new();
+        Dictionary<Cell, long> visited = new(new CellComparer());
+
+        var startPosition = matrix.GetCoordinates('S').Single();
+        var endPosition = matrix.GetCoordinates('E').Single();
+
+        var start = new Cell(startPosition, Direction.Right, 0, new List<Coordinates>(){startPosition});
+        visited[start] = 0;
+        nodesToProcess.Enqueue(start);
+        
+        var scores = new List<(long Score, List<Coordinates> Path)>();
+        while (nodesToProcess.TryDequeue(out var cell))
+        {
+            if (cell.Position == endPosition)
+            {
+                cell.Path!.Add(cell.Position);
+                scores.Add(new (
+                    cell.Cost!.Value,
+                    cell.Path));
+                continue;
+            }
+
+            if (visited.GetValueOrDefault(cell, int.MaxValue) < cell.Cost) continue;
+            visited[cell] = cell.Cost!.Value;
+
+            List<Cell> nextCells =
+            [
+                new(matrix.Move(cell.Direction, cell.Position),
+                    cell.Direction),
+                new(matrix.Move(matrix.RotateClockwise(cell.Direction), cell.Position),
+                    matrix.RotateClockwise(cell.Direction)),
+                new(matrix.Move(matrix.RotateCounterClockwise(cell.Direction), cell.Position),
+                    matrix.RotateCounterClockwise(cell.Direction))
+            ];
+
+            foreach (var nextCell in nextCells.Where(nextCell => matrix.GetValue(nextCell.Position) != '#'))
+            {
+                var nextPath = cell.Path!.ToList();
+                nextPath.Add(nextCell.Position);
+                
+                if (nextCell.Direction == cell.Direction)
+                    nodesToProcess.Enqueue(nextCell with { Cost = cell.Cost + 1, Path = nextPath});
+                else
+                    nodesToProcess.Enqueue(nextCell with { Cost = cell.Cost + 1001, Path = nextPath });
+            }
+        }
+
+        var cells = new List<Coordinates>();
+        var minScore = scores.MinBy(x => x.Score).Score;
+        foreach (var path in scores.Where(x => x.Score == minScore).Select(x => x.Path))
+        {
+            cells.AddRange(path);
+        }
+        
+        return cells.DistinctBy(c => new { c.X, c.Y }).Count();
     }
 
     private class CellComparer : IEqualityComparer<Cell>
@@ -78,7 +137,7 @@ public class Day16Puzzle : Puzzle
         }
     }
 
-    private record Cell(Coordinates Position, Direction Direction, long? Cost = null);
+    private record Cell(Coordinates Position, Direction Direction, long? Cost = null, List<Coordinates>? Path = null);
 
     public class Matrix : Models.Matrix
     {
