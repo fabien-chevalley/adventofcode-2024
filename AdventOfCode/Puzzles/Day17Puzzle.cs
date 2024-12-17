@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace AdventOfCode.Puzzles;
 
 public class Day17Puzzle : Puzzle
@@ -6,9 +8,6 @@ public class Day17Puzzle : Puzzle
 
     private readonly Dictionary<string, int> _registers = new()
     {
-        ["A"] = 30344604,
-        ["B"] = 0,
-        ["C"] = 0
     };
 
     public Day17Puzzle()
@@ -28,10 +27,30 @@ public class Day17Puzzle : Puzzle
 
     public override async ValueTask<long> PartOne()
     {
-        var line = await File.ReadAllTextAsync(Filename);
+        var lines = await File.ReadAllTextAsync(Filename);
+        var matches = Regex.Matches(lines,
+            @"Register A: (\d+)|Register B: (\d+)|Register C: (\d+)|Program: ([0-9,]+)");
 
-        var opertions = line.Split(",").Select(int.Parse).ToArray();
-
+        int[] opertions = [];
+        foreach (Match match in matches)
+        {
+            if (match.Groups[1].Success)
+            {
+                _registers["A"] = int.Parse(match.Groups[1].Value);
+            }
+            if (match.Groups[2].Success)
+            {
+                _registers["B"] = int.Parse(match.Groups[2].Value);
+            }
+            if (match.Groups[3].Success)
+            {
+                _registers["C"] = int.Parse(match.Groups[3].Value);
+            }
+            if (match.Groups[4].Success)
+            {
+                opertions = match.Groups[4].Value.Split(",").Select(int.Parse).ToArray();
+            }
+        }
         
         var output = new List<int>();
         var operationIndex = 0;
