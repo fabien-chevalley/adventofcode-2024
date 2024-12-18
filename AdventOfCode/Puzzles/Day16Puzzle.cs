@@ -206,13 +206,3 @@ public class Day16Puzzle : Puzzle
         }
     }
 }
-
-internal class FindException : Exception
-{
-    public FindException(long score)
-    {
-        Score = score;
-    }
-
-    public long Score { get; set; }
-}

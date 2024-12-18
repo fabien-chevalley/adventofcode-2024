@@ -2,7 +2,7 @@
 using AdventOfCode.Puzzles;
 
 
-await Solver.Solve<Day17Puzzle>();
+await Solver.Solve<Day18Puzzle>();
 
 // var mode = AnsiConsole.Prompt(
 //     new SelectionPrompt<string>()
