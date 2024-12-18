@@ -45,7 +45,31 @@ public class Day18Puzzle : Puzzle
     {
         var lines = await File.ReadAllTextAsync(Filename);
 
+        var matrix = new Matrix(CreateMatrix(Size + 1, Size + 1));
 
+        var matches = Regex.Matches(lines, @"(\d+),(\d+)");
+        var coordinates = matches.Select(m =>
+                new Coordinates(
+                    int.Parse(m.Groups[1].Value),
+                    int.Parse(m.Groups[2].Value)))
+            .ToArray();
+
+        foreach (var coordinate in coordinates.Take(Length))
+        {
+            matrix.SetValue(coordinate, '#');
+        }
+
+        var bestPath = 0L;
+        var index = Length;
+        do
+        {         
+            index++;
+            matrix.SetValue(coordinates[index], '#');
+            
+            bestPath = GetBestPath(new Coordinates(Size, Size), matrix);
+        }while(bestPath != long.MaxValue);
+        
+        Console.WriteLine(coordinates[index]);
         return 0;
     }
 
