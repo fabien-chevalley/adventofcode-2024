@@ -2,6 +2,7 @@ namespace AdventOfCode.Puzzles;
 
 public class Day19Puzzle : Puzzle
 {
+    private readonly Dictionary<string, long> _counts = new();
     private readonly HashSet<string> _foundDesigns = new();
 
     public override async ValueTask<long> PartOne()
@@ -12,6 +13,16 @@ public class Day19Puzzle : Puzzle
         var designs = lines[2..].ToArray();
 
         return designs.Count(design => Search(design, towels));
+    }
+
+    public override async ValueTask<long> PartTwo()
+    {
+        var lines = await File.ReadAllLinesAsync(Filename);
+
+        var towels = lines[0].Split(", ").OrderByDescending(x => x.Length).ToArray();
+        var designs = lines[2..].ToArray();
+
+        return designs.Sum(design => Search2(design, towels));
     }
 
     private bool Search(string design, string[] towels)
@@ -28,10 +39,18 @@ public class Day19Puzzle : Puzzle
         return _foundDesigns.Contains(design);
     }
 
-    public override async ValueTask<long> PartTwo()
+    private long Search2(string design, string[] towels)
     {
-        var lines = await File.ReadAllTextAsync(Filename);
+        if (_counts.TryGetValue(design, out var count)) return count;
 
-        return 0;
+        if (towels.Contains(design)) _counts.Add(design, 1L);
+
+        foreach (var towel in towels.Where(design.StartsWith))
+        {
+            _counts.TryAdd(design, 0L);
+            _counts[design] += Search2(design.Substring(towel.Length), towels);
+        }
+
+        return _counts.GetValueOrDefault(design, 0);
     }
 }
