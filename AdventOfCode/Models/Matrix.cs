@@ -35,6 +35,47 @@ public class Matrix : IEnumerable<Coordinates>
         return Data[position.X, position.Y];
     }
 
+    public char? GetValueInFront(Direction direction, Coordinates position)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                position = new Coordinates(position.X - 1, position.Y);
+                break;
+            case Direction.Right:
+                position = new Coordinates(position.X, position.Y + 1);
+                break;
+            case Direction.Down:
+                position = new Coordinates(position.X + 1, position.Y);
+                break;
+            case Direction.Left:
+                position = new Coordinates(position.X, position.Y - 1);
+                break;
+        }
+
+        if (IsOutOfBox(position)) return null;
+
+        return GetValue(position);
+    }
+    
+    
+    public Coordinates Move(Direction direction, Coordinates position)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                return new Coordinates(position.X - 1, position.Y);
+            case Direction.Right:
+                return new Coordinates(position.X, position.Y + 1);
+            case Direction.Down:
+                return new Coordinates(position.X + 1, position.Y);
+            case Direction.Left:
+                return new Coordinates(position.X, position.Y - 1);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     public void SetValue(Coordinates position, char value)
     {
         Data[position.X, position.Y] = value;
